@@ -36,7 +36,7 @@
 
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
   body {
     background: var(--ink);
@@ -49,6 +49,9 @@
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
+
+  a, button { -webkit-tap-highlight-color: rgba(217,58,46,.25); }
+  button { font: inherit; }
 
   ::selection { background: var(--vermillion); color: var(--paper); }
 
@@ -125,16 +128,139 @@
   }
   .nav__cta:hover { background: var(--paper); color: var(--ink); mix-blend-mode: normal; }
 
+  .nav__burger {
+    display: none;
+    width: 48px; height: 48px;
+    align-items: center; justify-content: center;
+    background: transparent;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    cursor: pointer;
+    color: var(--paper);
+    padding: 0;
+  }
+  .nav__burger svg { width: 18px; height: 18px; }
+  .nav__burger .close { display: none; }
+
   @media (max-width: 840px) {
-    .nav { grid-template-columns: 1fr auto; }
+    .nav {
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      padding: 16px var(--pad-x);
+    }
     .nav__links { display: none; }
+    .nav__cta { padding: 12px 16px; font-size: 10.5px; }
+    .nav__burger { display: inline-flex; }
+  }
+  @media (max-width: 420px) {
+    .nav__mark .stack em { font-size: 12px; }
+    .nav__mark { font-size: 10px; }
+    .nav__cta { padding: 12px 14px; font-size: 10px; letter-spacing: .12em; }
   }
 
+  /* ============ MOBILE MENU DRAWER ============ */
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex; flex-direction: column;
+    padding: 22px var(--pad-x) 40px;
+    transform: translateY(-100%);
+    transition: transform .45s cubic-bezier(.2,.7,.2,1);
+    visibility: hidden;
+  }
+  .menu[data-open="true"] { transform: translateY(0); visibility: visible; }
+  .menu__top {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .menu__brand {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  .menu__brand svg { width: 30px; height: auto; }
+  .menu__brand em {
+    font-family: var(--f-gurmukhi);
+    font-style: normal;
+    font-size: 14px;
+    letter-spacing: 0;
+    color: var(--paper);
+  }
+  .menu__close {
+    width: 48px; height: 48px;
+    border: 1px solid var(--paper);
+    background: transparent;
+    color: var(--paper);
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0;
+  }
+  .menu__close svg { width: 16px; height: 16px; }
+
+  .menu__list {
+    list-style: none;
+    margin: 0;
+    padding: 24px 0 20px;
+    flex: 1;
+    display: flex; flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+  }
+  .menu__list a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 18px 4px;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-variation-settings: "opsz" 144, "SOFT" 60, "wght" 400;
+    font-size: clamp(44px, 12vw, 78px);
+    line-height: .95;
+    letter-spacing: -.03em;
+    color: var(--paper);
+    border-bottom: 1px solid var(--line);
+    min-height: 44px;
+  }
+  .menu__list a:hover, .menu__list a:focus { color: var(--vermillion); }
+  .menu__list a small {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    font-style: normal;
+    color: var(--mist-2);
+    font-variation-settings: normal;
+  }
+
+  .menu__foot {
+    display: flex; flex-direction: column; gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--mist-2);
+  }
+  .menu__foot a { color: var(--paper); padding: 8px 0; min-height: 40px; display: inline-flex; align-items: center; }
+  .menu__foot a:hover { color: var(--vermillion); }
+
+  body.menu-open { overflow: hidden; }
+
   /* ============ HERO ============ */
-  .hero { position: relative; height: 220vh; }
+  .hero { position: relative; height: 220vh; height: 220dvh; }
   .hero__stage {
     position: sticky; top: 0;
-    height: 100vh; width: 100%;
+    height: 100vh; height: 100dvh;
+    width: 100%;
     overflow: hidden;
     background: radial-gradient(ellipse at 50% 62%, #1a0a08 0%, var(--ink) 65%);
   }
@@ -935,8 +1061,107 @@
     border: 0;
   }
   @media (max-width: 520px) {
-    .np { bottom: 14px; right: 14px; padding: 8px 12px 8px 14px; }
-    .np__title { max-width: 140px; font-size: 10.5px; }
+    .np {
+      bottom: 12px; right: 12px; left: 12px;
+      padding: 8px 10px 8px 14px;
+      max-width: none;
+      justify-content: space-between;
+    }
+    .np__label { font-size: 9px; }
+    .np__title { max-width: none; font-size: 11px; }
+    .np__btn { width: 40px; height: 40px; }
+  }
+
+  /* ============ COMPREHENSIVE MOBILE FIXES ============ */
+  @media (max-width: 900px) {
+    /* Section spacing tightens on mobile */
+    .side-a { padding: 100px 0 80px; }
+    .side-b { padding: 100px 0 100px; }
+    .upcoming { padding: 20px 0 100px; }
+    .upcoming__mast { padding-top: 40px; }
+    .book { padding: 100px 0 140px; }
+
+    /* SIDE A / SIDE B labels: reposition instead of colliding */
+    .side-a::before, .side-b::before {
+      top: 28px; right: var(--pad-x);
+      font-size: 10px; letter-spacing: .28em;
+    }
+
+    /* Masts stack cleanly */
+    .side-a__mast, .side-b__mast, .upcoming__mast {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+      padding-bottom: 20px;
+      margin-bottom: 40px;
+    }
+    .side-a__mast .stamp,
+    .upcoming__mast .region { text-align: left; }
+    .side-b__mast .see { align-self: flex-start; }
+
+    /* Bump all tap targets to 44px min */
+    .nav__cta, .invite__cta, .cass__play,
+    .show-row .rsvp, .menu__close, .nav__burger,
+    .np__btn, .menu__list a, .footer .links a {
+      min-height: 44px;
+    }
+    .cass__play { padding: 12px 18px; font-size: 11px; }
+    .show-row .rsvp { padding: 12px 18px; font-size: 11px; }
+    .invite__cta { padding: 18px 26px; font-size: 12px; }
+
+    /* Track cards: tighten track number so text has more room */
+    .track { grid-template-columns: 44px 1fr; gap: 16px; }
+    .track__num { font-size: 36px; }
+
+    /* Cassette cards: adjust reel positioning */
+    .cass { padding: 22px 20px 20px; min-height: 340px; }
+    .cass__title { font-size: 30px; }
+    .cass__list { font-size: 12px; }
+    .cass__list li { padding: 8px 0; }
+
+    /* Show rows: tighter grid, ensure title has room */
+    .show-row {
+      grid-template-columns: 80px 1fr;
+      padding: 22px 4px;
+      row-gap: 4px;
+    }
+    .show-row .date { font-size: 32px; }
+    .show-row .title { font-size: 18px; }
+    .show-row .title em { font-size: 13px; }
+    .show-row .venue, .show-row .city { font-size: 10.5px; }
+
+    /* Invite card fits properly on mobile */
+    .invite { padding: 50px clamp(22px, 6vw, 60px); }
+    .invite::before, .invite::after {
+      width: 32px; height: 32px;
+    }
+    .invite::before { top: -16px; left: -16px; }
+    .invite::after { bottom: -16px; right: -16px; }
+
+    /* Footer readability */
+    footer { padding: 40px var(--pad-x) 100px; gap: 24px; }
+    footer .links { flex-wrap: wrap; gap: 16px; }
+    footer .links a { padding: 8px 0; display: inline-flex; align-items: center; min-height: 40px; }
+  }
+
+  @media (max-width: 520px) {
+    /* Smallest phones: reduce heaviest type further */
+    .side-a__mast h2, .side-b__mast h2 { font-size: clamp(44px, 13vw, 72px); }
+    .upcoming__mast h2 { font-size: clamp(40px, 12vw, 68px); }
+    .track__body h3 { font-size: 21px; }
+    .track__body p { font-size: 15px; }
+    .side-a__closer { padding: 40px 0 30px; }
+    .side-a__closer blockquote { font-size: clamp(24px, 6.5vw, 34px); }
+    .invite h3 { font-size: clamp(40px, 11vw, 68px); }
+    .invite p { font-size: 15px; }
+    .invite__details { grid-template-columns: 1fr; }
+
+    /* Hero meta simpler stack */
+    .hero__meta { bottom: 90px; gap: 14px; }
+    .hero__meta .col strong { font-size: 11px; }
+
+    /* Nav: give burger more room */
+    .nav { padding: 14px 16px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -963,7 +1188,43 @@
     <a href="#gallery">Gallery</a>
   </div>
   <a href="#book" class="nav__cta">Bookings</a>
+  <button class="nav__burger" id="burger" aria-label="Open menu" aria-controls="menu" aria-expanded="false">
+    <svg class="open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <line x1="4" y1="8" x2="20" y2="8"/>
+      <line x1="4" y1="16" x2="20" y2="16"/>
+    </svg>
+  </button>
 </nav>
+
+<!-- ============ MOBILE MENU DRAWER ============ -->
+<div class="menu" id="menu" data-open="false" aria-hidden="true">
+  <div class="menu__top">
+    <div class="menu__brand">
+      <svg viewBox="0 0 240 160" aria-hidden="true">
+        <path d="M50,130 C25,130 15,105 35,90 C15,80 20,55 45,55 C40,30 75,20 92,42 C100,20 138,20 150,45 C175,30 205,50 195,75 C220,80 220,110 195,120 C205,135 175,140 160,128 Z"
+              fill="#D93A2E" stroke="#0B0806" stroke-width="6" stroke-linejoin="round"/>
+      </svg>
+      <span>Apogee <em>ਅਪੋਜੀ</em></span>
+    </div>
+    <button class="menu__close" id="menuClose" aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <line x1="6" y1="6" x2="18" y2="18"/>
+        <line x1="6" y1="18" x2="18" y2="6"/>
+      </svg>
+    </button>
+  </div>
+  <ul class="menu__list">
+    <li><a href="#about" data-menu-link>About<small>01</small></a></li>
+    <li><a href="#mixes" data-menu-link>Mixes<small>02</small></a></li>
+    <li><a href="#shows" data-menu-link>Shows<small>03</small></a></li>
+    <li><a href="#book" data-menu-link>Bookings<small>04</small></a></li>
+  </ul>
+  <div class="menu__foot">
+    <a href="mailto:apogee@flyingnimbus.ca">apogee@flyingnimbus.ca</a>
+    <a href="https://instagram.com/apo8ee" target="_blank" rel="noopener">@apo8ee — Instagram</a>
+    <a href="https://soundcloud.com/apo8ee" target="_blank" rel="noopener">@apo8ee — SoundCloud</a>
+  </div>
+</div>
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
@@ -1196,6 +1457,25 @@
 </div>
 
 <script>
+  /* ============ MOBILE MENU ============ */
+  const menu = document.getElementById('menu');
+  const burger = document.getElementById('burger');
+  const menuClose = document.getElementById('menuClose');
+  function setMenu(open) {
+    menu.dataset.open = open;
+    menu.setAttribute('aria-hidden', String(!open));
+    burger.setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('menu-open', open);
+  }
+  burger.addEventListener('click', () => setMenu(true));
+  menuClose.addEventListener('click', () => setMenu(false));
+  document.querySelectorAll('[data-menu-link]').forEach(a => {
+    a.addEventListener('click', () => setMenu(false));
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && menu.dataset.open === 'true') setMenu(false);
+  });
+
   /* ============ MIXES DATA (add a new object to add a mix) ============ */
   const mixes = [
     {
